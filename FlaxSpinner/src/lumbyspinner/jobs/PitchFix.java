@@ -1,10 +1,10 @@
 package lumbyspinner.jobs;
 
 import lumbyspinner.util.Job;
+
 import org.powerbot.script.methods.MethodContext;
 
 public class PitchFix extends Job {
-
 	public PitchFix(MethodContext ctx) {
 		super(ctx);
 	}
