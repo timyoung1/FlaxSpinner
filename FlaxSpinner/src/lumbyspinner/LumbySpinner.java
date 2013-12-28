@@ -35,7 +35,7 @@ public class LumbySpinner extends PollingScript implements PaintListener {
 	}
 
 	public void repaint(Graphics g) {
-		g.setColor(Color.GREEN);
+		g.setColor(Color.BLACK);
 		g.drawString("LumbySpinner " + "V 1.21", 5, 400);
 		g.drawString("by timyoung", 5, 415);
 		g.drawString("Time Running: " + timer.incrementAndGet(), 5, 430);
