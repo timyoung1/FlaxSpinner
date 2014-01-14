@@ -12,49 +12,48 @@ import org.powerbot.script.util.Condition;
 import org.powerbot.script.wrappers.Area;
 import org.powerbot.script.wrappers.GameObject;
 
-public class ClimbdownStairs extends Job {
+public class BankFailsafe extends Job {
+	private final Area Bankroof;
 	private final Area Bankfloor;
-	private final Area Spinwheelfloor;
-	private final int Flax;
-	private final int thirdfloorstairs;
+	private final int roofladder;
 
-	public ClimbdownStairs(MethodContext ctx) {
+	public BankFailsafe(MethodContext ctx) {
 		super(ctx);
+		this.Bankroof = Areas.Bankroof.getArea();
 		this.Bankfloor = Areas.Bankfloor.getArea();
-		this.Spinwheelfloor = Areas.Spinwheelfloor.getArea();
-		this.Flax = Constantss.Flax.getId();
-		this.thirdfloorstairs = Constantss.thirdfloorstairs.getId();
+		this.roofladder = Constantss.bankladder.getId();
 	}
 
 	@Override
 	public boolean activate() {
-		return ctx.backpack.select().id(Flax).count() != 0
-				&& Bankfloor.contains(ctx.players.local());
+
+		return Bankroof.contains(ctx.players.local());
 	}
 
 	@Override
 	public void execute() {
-		GameObject stairs = ctx.objects.select().id(thirdfloorstairs).nearest()
+
+		GameObject stairs = ctx.objects.select().id(roofladder).nearest()
 				.poll();
 		if (stairs.isValid()) {
 			if (stairs.isOnScreen()
 					&& stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
 				if (stairs.getLocation().distanceTo(ctx.players.local()) > 3) {
-					Misc.s("Turning Camera to Stairs");
+					Misc.s("Turning to Ladder");
 					ctx.camera.turnTo(stairs);
 				}
-				Misc.s("Climbing down Staircase");
-				stairs.interact("Climb-down", "Staircase");
+				Misc.s("Climbing down Ladder");
+				stairs.interact("Climb-up", "Staircase");
 
 				Condition.wait(new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
-						return Spinwheelfloor.contains(ctx.players.local())
-								|| ctx.players.local().getSpeed() == 0;
+						return ctx.players.local().getSpeed() == 0
+								|| Bankfloor.contains(ctx.players.local());
 					}
 				}, 2000, 3000);
 			} else {
-				Misc.s("Walking to Stairs");
+				Misc.s("Walking to Ladder");
 				ctx.movement.stepTowards(stairs.getLocation().randomize(1, 1));
 
 				Condition.wait(new Callable<Boolean>() {
@@ -66,7 +65,7 @@ public class ClimbdownStairs extends Job {
 				}, 750, 20);
 			}
 		} else {
-			Misc.s("Cannot find Stairs to go down");
+			Misc.s("Cannot find Ladder");
 		}
 	}
 }

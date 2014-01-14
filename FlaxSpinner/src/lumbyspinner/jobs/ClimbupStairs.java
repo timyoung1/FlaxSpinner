@@ -38,20 +38,25 @@ public class ClimbupStairs extends Job {
 				.nearest().poll();
 		if (stairs.isValid()) {
 			if (stairs.isOnScreen()
-					&& stairs.getLocation().distanceTo(ctx.players.local()) <= 6) {
+					&& stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
 				if (stairs.getLocation().distanceTo(ctx.players.local()) > 3) {
 					Misc.s("Turning Camera to Stairs");
 					ctx.camera.turnTo(stairs);
 				}
 				Misc.s("Climbing up Staircase");
 				stairs.interact("Climb-up", "Staircase");
-
+				
+				if (Areas.Bankfloor.getArea().contains(ctx.players.local())) {
+					Misc.count += ctx.backpack.select().id(Constantss.BowString.getId()).count();
+				}
+				
 				Condition.wait(new Callable<Boolean>() {
+					@Override
 					public Boolean call() throws Exception {
-						return ctx.players.local().isIdle()
+						return ctx.players.local().getSpeed() == 0
 								|| Bankfloor.contains(ctx.players.local());
 					}
-				}, 2000, 3000);
+				}, 2000, 250);
 			} else {
 				Misc.s("Walking to Stairs");
 				ctx.movement.stepTowards(stairs.getLocation().randomize(1, 1));
@@ -62,7 +67,7 @@ public class ClimbupStairs extends Job {
 						return ctx.movement.getDistance(ctx.players.local(),
 								ctx.movement.getDestination()) < 4;
 					}
-				}, 750, 20);
+				}, 750, 250);
 			}
 		} else {
 			Misc.s("Cannot find Stairs to go up");

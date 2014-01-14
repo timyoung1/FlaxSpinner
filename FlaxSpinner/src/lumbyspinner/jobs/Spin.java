@@ -9,7 +9,6 @@ import lumbyspinner.util.Job;
 
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.util.Condition;
-import org.powerbot.script.util.Random;
 import org.powerbot.script.wrappers.Area;
 import org.powerbot.script.wrappers.GameObject;
 
@@ -38,36 +37,37 @@ public class Spin extends Job {
 		GameObject wheel = ctx.objects.select().id(SpinningWheel).nearest()
 				.poll();
 
-		if (ctx.widgets.get(1370, 20).isValid()) {
+		if (ctx.widgets.get(1370, 20).isVisible()) {
 			if (ctx.widgets.get(1370, 20).isOnScreen()) {
 				Misc.s("Spinning Flax");
 				ctx.widgets.get(1370, 20).interact("Make");
 
 				Condition.wait(new Callable<Boolean>() {
+					@Override
 					public Boolean call() throws Exception {
-						return ctx.players.local().isIdle()
-								&& ctx.widgets.get(1251, 11).isValid();
+						return ctx.widgets.get(1251, 11).isOnScreen()
+								|| ctx.players.local().getSpeed() == 0;
 					}
-				}, 2500, 3000);
+				}, 750, 3000);
 			}
 		} else {
 			if (wheel.isValid()) {
 				if (wheel.isOnScreen()
-						&& wheel.getLocation().distanceTo(ctx.players.local()) <= 6) {
+						&& wheel.getLocation().distanceTo(ctx.players.local()) <= 10) {
 					if (wheel.getLocation().distanceTo(ctx.players.local()) > 3) {
 						Misc.s("Turning Camera to wheel");
 						ctx.camera.turnTo(wheel);
-						sleep(Random.nextInt(250, 750));
 					}
 					Misc.s("Clicking wheel");
 					wheel.interact("Spin", "Spinning wheel");
 
 					Condition.wait(new Callable<Boolean>() {
+						@Override
 						public Boolean call() throws Exception {
-							return ctx.players.local().isIdle()
-									&& ctx.widgets.get(1370, 20).isValid();
+							return ctx.players.local().getSpeed() == 0
+									|| ctx.widgets.get(1370, 20).isOnScreen();
 						}
-					}, 2500, 3000);
+					}, 750, 3000);
 				} else {
 					Misc.s("Walking to wheel");
 					ctx.movement.stepTowards(wheel.getLocation()
@@ -80,10 +80,10 @@ public class Spin extends Job {
 									ctx.players.local(),
 									ctx.movement.getDestination()) < 4;
 						}
-					}, 750, 20);
+					}, 1250, 250);
 				}
 			} else {
-				Misc.s("Cannot find Spinnin wheel");
+				Misc.s("Cannot find Spinning wheel");
 			}
 		}
 	}

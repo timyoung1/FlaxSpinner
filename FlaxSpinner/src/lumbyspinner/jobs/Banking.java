@@ -33,20 +33,23 @@ public class Banking extends Job {
 	@Override
 	public void execute() {
 		if (ctx.bank.isOpen()) {
+
 			ctx.bank.depositInventory();
-
 			if (ctx.backpack.select().id(Flax).count() == 0) {
-				ctx.bank.withdraw(Flax, 0);
-
-				Condition.wait(new Callable<Boolean>() {
-					public Boolean call() throws Exception {
-						return !ctx.backpack.select().id(Flax).isEmpty();
-					}
-				}, 750, 20);
+				if (ctx.bank.select().id(Flax).count() != 0) {
+					ctx.bank.withdraw(Flax, 0);
+				} else {
+					ctx.getBot().isStopping();
+				}
 			}
-			ctx.bank.close();
 			sleep(Random.nextInt(250, 750));
-		} else if (ctx.bank.isOnScreen()) {
+		} else if (ctx.bank.isOnScreen()
+				&& ctx.bank.getNearest().getLocation()
+						.distanceTo(ctx.players.local()) < 10) {
+			if (ctx.bank.getNearest().getLocation()
+					.distanceTo(ctx.players.local()) > 3) {
+				ctx.camera.turnTo(ctx.bank.getNearest());
+			}
 			Misc.s("Opening Bank");
 			ctx.bank.open();
 

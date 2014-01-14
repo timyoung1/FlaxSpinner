@@ -12,12 +12,12 @@ import org.powerbot.script.util.Condition;
 import org.powerbot.script.wrappers.Area;
 import org.powerbot.script.wrappers.GameObject;
 
-public class failsafe extends Job {
+public class StairFailsafe extends Job {
 	private final Area GroundFloor;
 	private final Area Bankfloor;
 	private final int groundfloorstairs;
 
-	public failsafe(MethodContext ctx) {
+	public StairFailsafe(MethodContext ctx) {
 		super(ctx);
 		this.GroundFloor = Areas.GroundFloor.getArea();
 		this.Bankfloor = Areas.Bankfloor.getArea();
@@ -37,7 +37,7 @@ public class failsafe extends Job {
 				.nearest().poll();
 		if (stairs.isValid()) {
 			if (stairs.isOnScreen()
-					&& stairs.getLocation().distanceTo(ctx.players.local()) <= 6) {
+					&& stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
 				if (stairs.getLocation().distanceTo(ctx.players.local()) > 3) {
 					Misc.s("Turning Camera to Stairs");
 					ctx.camera.turnTo(stairs);
@@ -48,7 +48,7 @@ public class failsafe extends Job {
 				Condition.wait(new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
-						return ctx.players.local().isIdle()
+						return ctx.players.local().getSpeed() == 0
 								|| Bankfloor.contains(ctx.players.local());
 					}
 				}, 2000, 3000);
