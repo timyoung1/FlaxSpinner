@@ -28,8 +28,9 @@ public class ClimbupStairs extends Job {
 
 	@Override
 	public boolean activate() {
-		return ctx.backpack.select().id(Flax).count() == 0
-				&& Spinwheelfloor.contains(ctx.players.local());
+		return ctx.backpack.select().id(Flax).isEmpty()
+				&& Spinwheelfloor.contains(ctx.players.local())
+				&& !ctx.players.local().isInMotion();
 	}
 
 	@Override
@@ -43,20 +44,23 @@ public class ClimbupStairs extends Job {
 					Misc.s("Turning Camera to Stairs");
 					ctx.camera.turnTo(stairs);
 				}
-				Misc.s("Climbing up Staircase");
-				stairs.interact("Climb-up", "Staircase");
-				
-				if (Areas.Bankfloor.getArea().contains(ctx.players.local())) {
-					Misc.count += ctx.backpack.select().id(Constantss.BowString.getId()).count();
-				}
-				
-				Condition.wait(new Callable<Boolean>() {
-					@Override
-					public Boolean call() throws Exception {
-						return ctx.players.local().getSpeed() == 0
-								|| Bankfloor.contains(ctx.players.local());
+				if (!ctx.players.local().isInMotion()) {
+					Misc.s("Climbing up Staircase");
+					stairs.interact("Climb-up", "Staircase");
+
+					if (ctx.game.getClientState() == 11) {
+						Misc.count += ctx.backpack.select()
+								.id(Constantss.BowString.getId()).count();
 					}
-				}, 2000, 250);
+
+					Condition.wait(new Callable<Boolean>() {
+						@Override
+						public Boolean call() throws Exception {
+							return ctx.players.local().getSpeed() == 0
+									|| Bankfloor.contains(ctx.players.local());
+						}
+					}, 2000, 250);
+				}
 			} else {
 				Misc.s("Walking to Stairs");
 				ctx.movement.stepTowards(stairs.getLocation().randomize(1, 1));

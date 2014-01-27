@@ -28,8 +28,9 @@ public class ClimbdownStairs extends Job {
 
 	@Override
 	public boolean activate() {
-		return ctx.backpack.select().id(Flax).count() != 0
-				&& Bankfloor.contains(ctx.players.local());
+		return !ctx.backpack.select().id(Flax).isEmpty()
+				&& Bankfloor.contains(ctx.players.local())
+				&& !ctx.players.local().isInMotion();
 	}
 
 	@Override
@@ -43,16 +44,18 @@ public class ClimbdownStairs extends Job {
 					Misc.s("Turning Camera to Stairs");
 					ctx.camera.turnTo(stairs);
 				}
-				Misc.s("Climbing down Staircase");
-				stairs.interact("Climb-down", "Staircase");
+				if (!ctx.players.local().isInMotion()) {
+					Misc.s("Climbing down Staircase");
+					stairs.interact("Climb-down", "Staircase");
 
-				Condition.wait(new Callable<Boolean>() {
-					@Override
-					public Boolean call() throws Exception {
-						return Spinwheelfloor.contains(ctx.players.local())
-								|| ctx.players.local().getSpeed() == 0;
-					}
-				}, 2000, 3000);
+					Condition.wait(new Callable<Boolean>() {
+						@Override
+						public Boolean call() throws Exception {
+							return Spinwheelfloor.contains(ctx.players.local())
+									|| ctx.players.local().getSpeed() == 0;
+						}
+					}, 2000, 3000);
+				}
 			} else {
 				Misc.s("Walking to Stairs");
 				ctx.movement.stepTowards(stairs.getLocation().randomize(1, 1));

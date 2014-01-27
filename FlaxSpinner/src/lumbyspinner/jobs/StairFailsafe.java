@@ -42,16 +42,18 @@ public class StairFailsafe extends Job {
 					Misc.s("Turning Camera to Stairs");
 					ctx.camera.turnTo(stairs);
 				}
-				Misc.s("Climbing up Staircase");
-				stairs.interact("Climb-up", "Staircase");
+				if (!ctx.players.local().isInMotion()) {
+					Misc.s("Climbing up Staircase");
+					stairs.interact("Climb-up", "Staircase");
 
-				Condition.wait(new Callable<Boolean>() {
-					@Override
-					public Boolean call() throws Exception {
-						return ctx.players.local().getSpeed() == 0
-								|| Bankfloor.contains(ctx.players.local());
-					}
-				}, 2000, 3000);
+					Condition.wait(new Callable<Boolean>() {
+						@Override
+						public Boolean call() throws Exception {
+							return ctx.players.local().getSpeed() == 0
+									|| Bankfloor.contains(ctx.players.local());
+						}
+					}, 2000, 3000);
+				}
 			} else {
 				Misc.s("Walking to Stairs");
 				ctx.movement.stepTowards(stairs.getLocation().randomize(1, 1));

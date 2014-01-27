@@ -58,16 +58,19 @@ public class Spin extends Job {
 						Misc.s("Turning Camera to wheel");
 						ctx.camera.turnTo(wheel);
 					}
-					Misc.s("Clicking wheel");
-					wheel.interact("Spin", "Spinning wheel");
+					if (!ctx.players.local().isInMotion()) {
+						Misc.s("Clicking wheel");
+						wheel.interact("Spin", "Spinning wheel");
 
-					Condition.wait(new Callable<Boolean>() {
-						@Override
-						public Boolean call() throws Exception {
-							return ctx.players.local().getSpeed() == 0
-									|| ctx.widgets.get(1370, 20).isOnScreen();
-						}
-					}, 750, 3000);
+						Condition.wait(new Callable<Boolean>() {
+							@Override
+							public Boolean call() throws Exception {
+								return ctx.players.local().getSpeed() == 0
+										|| ctx.widgets.get(1370, 20)
+												.isOnScreen();
+							}
+						}, 750, 3000);
+					}
 				} else {
 					Misc.s("Walking to wheel");
 					ctx.movement.stepTowards(wheel.getLocation()
