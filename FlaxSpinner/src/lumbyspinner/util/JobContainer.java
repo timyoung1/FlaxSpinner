@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 public class JobContainer implements Comparator<Job> {
-	private List<Job> jobList = new ArrayList<Job>();
+	private final List<Job> jobList = new ArrayList<Job>();
 
 	public JobContainer(Job[] jobs) {
 		submit(jobs);

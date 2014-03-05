@@ -8,8 +8,8 @@ import lumbyspinner.util.Job;
 import org.powerbot.script.methods.MethodContext;
 
 public class Withdraw extends Job {
-	private LumbySpinner script;
-	private int Flax;
+	private final LumbySpinner script;
+	private final int Flax;
 
 	public Withdraw(MethodContext ctx, LumbySpinner script) {
 		super(ctx);
@@ -19,7 +19,7 @@ public class Withdraw extends Job {
 
 	@Override
 	public boolean activate() {
-		return ctx.bank.isOpen() && ctx.backpack.isEmpty();
+		return ctx.bank.isOpen() && ctx.backpack.select().count() == 0;
 	}
 
 	@Override

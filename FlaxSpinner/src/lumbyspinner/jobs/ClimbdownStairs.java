@@ -9,6 +9,7 @@ import lumbyspinner.util.Job;
 
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.util.Condition;
+import org.powerbot.script.util.Random;
 import org.powerbot.script.wrappers.Area;
 import org.powerbot.script.wrappers.GameObject;
 
@@ -37,14 +38,14 @@ public class ClimbdownStairs extends Job {
 	public void execute() {
 		GameObject stairs = ctx.objects.select().id(thirdfloorstairs).nearest()
 				.poll();
+
 		if (stairs.isValid()) {
-			if (stairs.isOnScreen()
-					&& stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
-				if (stairs.getLocation().distanceTo(ctx.players.local()) > 3) {
+			if (stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
+				if (!stairs.isInViewport()
+						&& stairs.getLocation().distanceTo(ctx.players.local()) < 10) {
 					Misc.s("Turning Camera to Stairs");
 					ctx.camera.turnTo(stairs);
-				}
-				if (!ctx.players.local().isInMotion()) {
+				} else if (!ctx.players.local().isInMotion()) {
 					Misc.s("Climbing down Staircase");
 					stairs.interact("Climb-down", "Staircase");
 
@@ -54,7 +55,7 @@ public class ClimbdownStairs extends Job {
 							return Spinwheelfloor.contains(ctx.players.local())
 									|| ctx.players.local().getSpeed() == 0;
 						}
-					}, 2000, 3000);
+					}, Random.nextInt(150, 1750), 10);
 				}
 			} else {
 				Misc.s("Walking to Stairs");
@@ -64,9 +65,9 @@ public class ClimbdownStairs extends Job {
 					@Override
 					public Boolean call() throws Exception {
 						return ctx.movement.getDistance(ctx.players.local(),
-								ctx.movement.getDestination()) < 4;
+								ctx.movement.getDestination()) < 3;
 					}
-				}, 750, 20);
+				}, Random.nextInt(150, 1250), 10);
 			}
 		} else {
 			Misc.s("Cannot find Stairs to go down");

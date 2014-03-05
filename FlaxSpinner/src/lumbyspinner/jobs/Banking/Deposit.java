@@ -1,13 +1,10 @@
 package lumbyspinner.jobs.Banking;
 
-import java.util.concurrent.Callable;
-
 import lumbyspinner.data.Constantss;
 import lumbyspinner.data.Misc;
 import lumbyspinner.util.Job;
 
 import org.powerbot.script.methods.MethodContext;
-import org.powerbot.script.util.Condition;
 
 public class Deposit extends Job {
 	private final int Flax;
@@ -27,12 +24,5 @@ public class Deposit extends Job {
 	public void execute() {
 		Misc.s("Depositing Backpack");
 		ctx.bank.depositInventory();
-
-		Condition.wait(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return ctx.backpack.select().count() == 0;
-			}
-		}, 550, 50);
 	}
 }

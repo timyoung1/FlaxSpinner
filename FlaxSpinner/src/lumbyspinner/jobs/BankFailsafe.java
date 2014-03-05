@@ -9,6 +9,7 @@ import lumbyspinner.util.Job;
 
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.util.Condition;
+import org.powerbot.script.util.Random;
 import org.powerbot.script.wrappers.Area;
 import org.powerbot.script.wrappers.GameObject;
 
@@ -33,14 +34,14 @@ public class BankFailsafe extends Job {
 	public void execute() {
 		GameObject stairs = ctx.objects.select().id(roofladder).nearest()
 				.poll();
+
 		if (stairs.isValid()) {
-			if (stairs.isOnScreen()
-					&& stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
-				if (stairs.getLocation().distanceTo(ctx.players.local()) > 3) {
+			if (stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
+				if (!stairs.isInViewport()
+						&& stairs.getLocation().distanceTo(ctx.players.local()) < 10) {
 					Misc.s("Turning to Ladder");
 					ctx.camera.turnTo(stairs);
-				}
-				if (!ctx.players.local().isInMotion()) {
+				} else if (!ctx.players.local().isInMotion()) {
 					Misc.s("Climbing down Ladder");
 					stairs.interact("Climb-up", "Staircase");
 
@@ -50,7 +51,7 @@ public class BankFailsafe extends Job {
 							return ctx.players.local().getSpeed() == 0
 									|| Bankfloor.contains(ctx.players.local());
 						}
-					}, 2000, 3000);
+					}, Random.nextInt(150, 1750), 10);
 				}
 			} else {
 				Misc.s("Walking to Ladder");
@@ -60,9 +61,9 @@ public class BankFailsafe extends Job {
 					@Override
 					public Boolean call() throws Exception {
 						return ctx.movement.getDistance(ctx.players.local(),
-								ctx.movement.getDestination()) < 4;
+								ctx.movement.getDestination()) < 3;
 					}
-				}, 750, 20);
+				}, Random.nextInt(150, 1250), 10);
 			}
 		} else {
 			Misc.s("Cannot find Ladder");

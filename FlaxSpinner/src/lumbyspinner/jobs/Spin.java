@@ -9,8 +9,10 @@ import lumbyspinner.util.Job;
 
 import org.powerbot.script.methods.MethodContext;
 import org.powerbot.script.util.Condition;
+import org.powerbot.script.util.Random;
 import org.powerbot.script.wrappers.Area;
 import org.powerbot.script.wrappers.GameObject;
+import org.powerbot.script.wrappers.Tile;
 
 public class Spin extends Job {
 	private final Area Spinwheelfloor;
@@ -38,27 +40,27 @@ public class Spin extends Job {
 				.poll();
 
 		if (ctx.widgets.get(1370, 20).isVisible()) {
-			if (ctx.widgets.get(1370, 20).isOnScreen()) {
+			if (ctx.widgets.get(1370, 20).isInViewport()) {
 				Misc.s("Spinning Flax");
 				ctx.widgets.get(1370, 20).interact("Make");
 
 				Condition.wait(new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
-						return ctx.widgets.get(1251, 11).isOnScreen()
+						return ctx.widgets.get(1251, 11).isInViewport()
 								|| ctx.players.local().getSpeed() == 0;
 					}
-				}, 750, 3000);
+				}, Random.nextInt(250, 2000), 10);
 			}
 		} else {
 			if (wheel.isValid()) {
-				if (wheel.isOnScreen()
-						&& wheel.getLocation().distanceTo(ctx.players.local()) <= 10) {
-					if (wheel.getLocation().distanceTo(ctx.players.local()) > 3) {
+				if (wheel.getLocation().distanceTo(ctx.players.local()) <= 10) {
+					if (!wheel.isInViewport()
+							&& wheel.getLocation().distanceTo(
+									ctx.players.local()) < 10) {
 						Misc.s("Turning Camera to wheel");
 						ctx.camera.turnTo(wheel);
-					}
-					if (!ctx.players.local().isInMotion()) {
+					} else if (ctx.players.local().getSpeed() == 0) {
 						Misc.s("Clicking wheel");
 						wheel.interact("Spin", "Spinning wheel");
 
@@ -66,24 +68,24 @@ public class Spin extends Job {
 							@Override
 							public Boolean call() throws Exception {
 								return ctx.players.local().getSpeed() == 0
-										|| ctx.widgets.get(1370, 20)
-												.isOnScreen();
+										|| ctx.widgets.get(1370, 150)
+												.isInViewport();
 							}
-						}, 750, 3000);
+						}, Random.nextInt(150, 1750), 10);
 					}
 				} else {
 					Misc.s("Walking to wheel");
-					ctx.movement.stepTowards(wheel.getLocation()
-							.randomize(1, 1));
+					ctx.movement.stepTowards(new Tile(3209, 3213, 1).randomize(
+							1, 1));
 
 					Condition.wait(new Callable<Boolean>() {
 						@Override
 						public Boolean call() throws Exception {
 							return ctx.movement.getDistance(
 									ctx.players.local(),
-									ctx.movement.getDestination()) < 4;
+									ctx.movement.getDestination()) < 3;
 						}
-					}, 1250, 250);
+					}, Random.nextInt(150, 1250), 10);
 				}
 			} else {
 				Misc.s("Cannot find Spinning wheel");

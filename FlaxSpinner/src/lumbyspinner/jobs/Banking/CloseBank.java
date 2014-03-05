@@ -1,13 +1,10 @@
 package lumbyspinner.jobs.Banking;
 
-import java.util.concurrent.Callable;
-
 import lumbyspinner.data.Constantss;
 import lumbyspinner.data.Misc;
 import lumbyspinner.util.Job;
 
 import org.powerbot.script.methods.MethodContext;
-import org.powerbot.script.util.Condition;
 
 public class CloseBank extends Job {
 	private final int Flax;
@@ -27,13 +24,5 @@ public class CloseBank extends Job {
 	public void execute() {
 		Misc.s("Closing Bank");
 		ctx.bank.close();
-
-		Condition.wait(new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return !ctx.bank.isOpen();
-			}
-		}, 750, 50);
-		sleep(550, 100);
 	}
 }
