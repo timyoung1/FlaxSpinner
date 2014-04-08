@@ -7,11 +7,11 @@ import lumbyspinner.data.Constantss;
 import lumbyspinner.data.Misc;
 import lumbyspinner.util.Job;
 
-import org.powerbot.script.methods.MethodContext;
-import org.powerbot.script.util.Condition;
-import org.powerbot.script.util.Random;
-import org.powerbot.script.wrappers.Area;
-import org.powerbot.script.wrappers.GameObject;
+import org.powerbot.script.Area;
+import org.powerbot.script.Condition;
+import org.powerbot.script.Random;
+import org.powerbot.script.rt6.ClientContext;
+import org.powerbot.script.rt6.GameObject;
 
 public class ClimbdownStairs extends Job {
 	private final Area Bankfloor;
@@ -19,7 +19,7 @@ public class ClimbdownStairs extends Job {
 	private final int Flax;
 	private final int thirdfloorstairs;
 
-	public ClimbdownStairs(MethodContext ctx) {
+	public ClimbdownStairs(ClientContext ctx) {
 		super(ctx);
 		this.Bankfloor = Areas.Bankfloor.getArea();
 		this.Spinwheelfloor = Areas.Spinwheelfloor.getArea();
@@ -29,9 +29,9 @@ public class ClimbdownStairs extends Job {
 
 	@Override
 	public boolean activate() {
-		return !ctx.backpack.select().id(Flax).isEmpty()
+		return ctx.backpack.select().id(Flax).count() != 0
 				&& Bankfloor.contains(ctx.players.local())
-				&& !ctx.players.local().isInMotion();
+				&& !ctx.players.local().inMotion();
 	}
 
 	@Override
@@ -39,13 +39,13 @@ public class ClimbdownStairs extends Job {
 		GameObject stairs = ctx.objects.select().id(thirdfloorstairs).nearest()
 				.poll();
 
-		if (stairs.isValid()) {
-			if (stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
-				if (!stairs.isInViewport()
-						&& stairs.getLocation().distanceTo(ctx.players.local()) < 10) {
+		if (stairs.valid()) {
+			if (stairs.tile().distanceTo(ctx.players.local()) <= 6) {
+				if (!stairs.inViewport()
+						&& stairs.tile().distanceTo(ctx.players.local()) < 6) {
 					Misc.s("Turning Camera to Stairs");
 					ctx.camera.turnTo(stairs);
-				} else if (!ctx.players.local().isInMotion()) {
+				} else if (!ctx.players.local().inMotion()) {
 					Misc.s("Climbing down Staircase");
 					stairs.interact("Climb-down", "Staircase");
 
@@ -53,19 +53,19 @@ public class ClimbdownStairs extends Job {
 						@Override
 						public Boolean call() throws Exception {
 							return Spinwheelfloor.contains(ctx.players.local())
-									|| ctx.players.local().getSpeed() == 0;
+									|| ctx.players.local().speed() == 0;
 						}
 					}, Random.nextInt(150, 1750), 10);
 				}
 			} else {
 				Misc.s("Walking to Stairs");
-				ctx.movement.stepTowards(stairs.getLocation().randomize(1, 1));
+				ctx.movement.step(stairs.tile());
 
 				Condition.wait(new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
-						return ctx.movement.getDistance(ctx.players.local(),
-								ctx.movement.getDestination()) < 3;
+						return ctx.movement.distance(ctx.players.local(),
+								ctx.movement.destination()) < 3;
 					}
 				}, Random.nextInt(150, 1250), 10);
 			}

@@ -2,21 +2,20 @@ package lumbyspinner.jobs;
 
 import lumbyspinner.util.Job;
 
-import org.powerbot.script.methods.MethodContext;
+import org.powerbot.script.rt6.ClientContext;
 
 public class PitchFix extends Job {
-	public PitchFix(MethodContext ctx) {
+	public PitchFix(ClientContext ctx) {
 		super(ctx);
 	}
 
 	@Override
 	public boolean activate() {
-		return ctx.camera.getPitch() < 55;
+		return ctx.camera.pitch() < 55;
 	}
 
 	@Override
 	public void execute() {
-		ctx.camera.setPitch(true);
-		sleep(500);
+		ctx.camera.pitch(true);
 	}
 }

@@ -7,18 +7,18 @@ import lumbyspinner.data.Constantss;
 import lumbyspinner.data.Misc;
 import lumbyspinner.util.Job;
 
-import org.powerbot.script.methods.MethodContext;
-import org.powerbot.script.util.Condition;
-import org.powerbot.script.util.Random;
-import org.powerbot.script.wrappers.Area;
-import org.powerbot.script.wrappers.GameObject;
+import org.powerbot.script.Area;
+import org.powerbot.script.Condition;
+import org.powerbot.script.Random;
+import org.powerbot.script.rt6.ClientContext;
+import org.powerbot.script.rt6.GameObject;
 
 public class BankFailsafe extends Job {
 	private final Area Bankroof;
 	private final Area Bankfloor;
 	private final int roofladder;
 
-	public BankFailsafe(MethodContext ctx) {
+	public BankFailsafe(ClientContext ctx) {
 		super(ctx);
 		this.Bankroof = Areas.Bankroof.getArea();
 		this.Bankfloor = Areas.Bankfloor.getArea();
@@ -35,33 +35,33 @@ public class BankFailsafe extends Job {
 		GameObject stairs = ctx.objects.select().id(roofladder).nearest()
 				.poll();
 
-		if (stairs.isValid()) {
-			if (stairs.getLocation().distanceTo(ctx.players.local()) <= 10) {
-				if (!stairs.isInViewport()
-						&& stairs.getLocation().distanceTo(ctx.players.local()) < 10) {
+		if (stairs.valid()) {
+			if (stairs.tile().distanceTo(ctx.players.local()) <= 6) {
+				if (!stairs.inViewport()
+						&& stairs.tile().distanceTo(ctx.players.local()) < 6) {
 					Misc.s("Turning to Ladder");
 					ctx.camera.turnTo(stairs);
-				} else if (!ctx.players.local().isInMotion()) {
+				} else if (!ctx.players.local().inMotion()) {
 					Misc.s("Climbing down Ladder");
 					stairs.interact("Climb-up", "Staircase");
 
 					Condition.wait(new Callable<Boolean>() {
 						@Override
 						public Boolean call() throws Exception {
-							return ctx.players.local().getSpeed() == 0
+							return ctx.players.local().speed() == 0
 									|| Bankfloor.contains(ctx.players.local());
 						}
 					}, Random.nextInt(150, 1750), 10);
 				}
 			} else {
 				Misc.s("Walking to Ladder");
-				ctx.movement.stepTowards(stairs.getLocation().randomize(1, 1));
+				ctx.movement.step(stairs);
 
 				Condition.wait(new Callable<Boolean>() {
 					@Override
 					public Boolean call() throws Exception {
-						return ctx.movement.getDistance(ctx.players.local(),
-								ctx.movement.getDestination()) < 3;
+						return ctx.movement.distance(ctx.players.local(),
+								ctx.movement.destination()) < 3;
 					}
 				}, Random.nextInt(150, 1250), 10);
 			}

@@ -1,16 +1,11 @@
 package lumbyspinner.util;
 
-import org.powerbot.script.methods.MethodContext;
-import org.powerbot.script.methods.MethodProvider;
+import org.powerbot.script.rt6.ClientAccessor;
+import org.powerbot.script.rt6.ClientContext;
 
-public abstract class Job extends MethodProvider {
-	public Job(MethodContext ctx) {
+public abstract class Job extends ClientAccessor {
+	public Job(ClientContext ctx) {
 		super(ctx);
-	}
-
-	/* override this to extend the sleep time */
-	public int delay() {
-		return 250;
 	}
 
 	/* returns the priority of the job. higher priority = executed first */

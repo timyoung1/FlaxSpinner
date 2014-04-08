@@ -3,33 +3,30 @@ package lumbyspinner.jobs;
 import lumbyspinner.data.Areas;
 import lumbyspinner.util.Job;
 
-import org.powerbot.script.methods.Hud;
-import org.powerbot.script.methods.MethodContext;
-import org.powerbot.script.wrappers.Area;
+import org.powerbot.script.Area;
+import org.powerbot.script.rt6.ClientContext;
+import org.powerbot.script.rt6.Hud;
 
 public class InventoryFix extends Job {
 	private final Area Bankfloor;
 
-	public InventoryFix(MethodContext ctx) {
+	public InventoryFix(ClientContext ctx) {
 		super(ctx);
 		this.Bankfloor = Areas.Bankfloor.getArea();
 	}
 
 	@Override
 	public boolean activate() {
-		return ctx.game.isLoggedIn() && !ctx.hud.isVisible(Hud.Window.BACKPACK)
+		return ctx.game.loggedIn() && !ctx.hud.opened(Hud.Window.BACKPACK)
 				&& !Bankfloor.contains(ctx.players.local());
 	}
 
 	@Override
 	public void execute() {
-		sleep(1000);
-		if (!ctx.hud.isOpen(Hud.Window.BACKPACK)) {
+		if (!ctx.hud.open(Hud.Window.BACKPACK)) {
 			ctx.hud.open(Hud.Window.BACKPACK);
-			sleep(500);
-		} else if (!ctx.hud.isVisible(Hud.Window.BACKPACK)) {
-			ctx.hud.view(Hud.Window.BACKPACK);
-			sleep(500);
+		} else if (!ctx.hud.opened(Hud.Window.BACKPACK)) {
+			ctx.hud.open(Hud.Window.BACKPACK);
 		}
 	}
 }
