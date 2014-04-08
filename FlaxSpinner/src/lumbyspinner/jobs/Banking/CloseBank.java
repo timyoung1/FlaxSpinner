@@ -16,7 +16,8 @@ public class CloseBank extends Job {
 
 	@Override
 	public boolean activate() {
-		return ctx.bank.opened() && ctx.backpack.select().id(Flax).count() == 28;
+		return ctx.bank.opened()
+				&& ctx.backpack.select().id(Flax).count() == 28;
 	}
 
 	@Override

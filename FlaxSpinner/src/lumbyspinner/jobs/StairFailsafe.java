@@ -1,10 +1,12 @@
 package lumbyspinner.jobs;
 
 import java.util.concurrent.Callable;
+
 import lumbyspinner.data.Areas;
 import lumbyspinner.data.Constantss;
 import lumbyspinner.data.Misc;
 import lumbyspinner.util.Job;
+
 import org.powerbot.script.Area;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;

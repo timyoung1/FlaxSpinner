@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.text.DecimalFormat;
 import java.util.concurrent.Callable;
+
 import lumbyspinner.data.Areas;
 import lumbyspinner.data.Constantss;
 import lumbyspinner.data.Misc;
@@ -20,11 +21,12 @@ import lumbyspinner.jobs.Banking.OpenBank;
 import lumbyspinner.jobs.Banking.Withdraw;
 import lumbyspinner.util.Job;
 import lumbyspinner.util.JobContainer;
+
 import org.powerbot.script.Condition;
 import org.powerbot.script.PaintListener;
-import org.powerbot.script.Script;
 import org.powerbot.script.PollingScript;
 import org.powerbot.script.Random;
+import org.powerbot.script.Script;
 import org.powerbot.script.Tile;
 import org.powerbot.script.rt6.Bank;
 import org.powerbot.script.rt6.ClientContext;
@@ -38,7 +40,7 @@ public class LumbySpinner extends PollingScript<ClientContext> implements
 		PaintListener {
 	private JobContainer container;
 	private final DecimalFormat df = new DecimalFormat("###,###,###.#");
-
+	//Dad's time formatting method
 	String formated(long time) {
 		final int sec = (int) (time / 1000), h = sec / 3600, m = sec / 60 % 60, s = sec % 60;
 		return (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":"
