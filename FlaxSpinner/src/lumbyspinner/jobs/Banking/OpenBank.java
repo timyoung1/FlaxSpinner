@@ -1,21 +1,20 @@
 package lumbyspinner.jobs.Banking;
 
-import lumbyspinner.LumbySpinner;
 import lumbyspinner.data.Areas;
 import lumbyspinner.data.Constantss;
 import lumbyspinner.util.Job;
 
 import org.powerbot.script.Area;
+import org.powerbot.script.Tile;
 import org.powerbot.script.rt6.ClientContext;
 
 public class OpenBank extends Job {
-	private final LumbySpinner script;
 	private final Area Bankfloor;
 	private final int Flax;
+	private final Tile banktile = new Tile(3208, 3219, 2);
 
-	public OpenBank(ClientContext ctx, LumbySpinner script) {
+	public OpenBank(ClientContext ctx) {
 		super(ctx);
-		this.script = script;
 		this.Bankfloor = Areas.Bankfloor.getArea();
 		this.Flax = Constantss.Flax.getId();
 	}
@@ -29,6 +28,10 @@ public class OpenBank extends Job {
 
 	@Override
 	public void execute() {
-		script.open();
+		if (ctx.bank.inViewport()) {
+			ctx.bank.open();
+		} else {
+			ctx.movement.step(banktile);
+		}
 	}
 }
